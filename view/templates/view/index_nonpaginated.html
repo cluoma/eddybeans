@@ -1,0 +1,199 @@
+{% extends "view/base.html" %}
+
+{% block extrastyle %}
+    <style>
+        input[type="file"] {
+            display: none;
+        }
+
+        input[type=button], input[type=submit], input[type=reset] {
+            background-color: #04AA6D;
+            border: none;
+            color: white;
+            padding: 16px 32px;
+            text-decoration: none;
+            margin: 4px 2px;
+            cursor: pointer;
+            border-radius: 5px;
+            -webkit-appearance: none;
+        }
+
+        input[type=submit][disabled] {
+            background-color: #777777;
+        }
+
+        .comment-box{
+            border-style: none none none solid;
+            padding-left: 10px;
+            border-left-color: #3b5998;
+    }
+        .comment-box > .comment-name {
+            font-size: 12px;
+            color: rgb(100,100,100);
+            margin-bottom: 0;
+        }
+        .comment-box > .comment-text {
+            font-size: 16px;
+            color: rgb(50,50,50);
+            margin-top: 3px;
+        }
+    </style>
+{% endblock %}
+
+{% load static %}
+{% block content %}
+    <div class="container" style="padding-bottom: 50px;">
+        <div class="row">
+            <div class="col-sm-3"></div>
+            <div class="col-sm-6">
+            {# Post Cards with picture, likes, and comments #}
+                {% if posts %}
+                    {% for post in posts %}
+                        {% ifchanged post.post_date.date %}
+                            <div class="blog-post-preview-card"><h1 style="background: rgb(245, 245, 245); margin-bottom: 0px;">{{ post.post_date|date:"F j, Y" }}</h1></div>
+                        {% endifchanged %}
+                        <div class="blog-post-preview-card">
+                        <div class="row">
+                        <div class="col-sm-10">
+                            <p style="margin-top: 0px; margin-bottom: 0px;"><b>
+                                {% if post.user.first_name != "" %}{{ post.user.first_name }}{% else %}Unknown
+                                    User{% endif %}</b> posted</p>
+                        </div>
+                        {% if post.user_id == user.id %}
+                        <div class="col-sm-2">
+                            <a href="{% url 'view:edit_post' post.id %}"><i class="fa-solid fa-pencil fa-lg" style="float: right;"></i></a>
+                        </div>
+                        {% endif %}
+                        </div>
+                            <p class="blog-post-preview-text">{{ post.post_text }}</p>
+
+                            {% if post.video_file %}
+                                {% for video in videos %}
+                                    {% if video.post_id == post.id %}
+                                        <video width='100%' controls>
+                                        <source src='{{ video.video_file.url }}' type='video/mp4'>
+                                        Your browser does not support the video tag.
+                                        </video>
+                                    {% endif %}
+                                {% endfor %}
+                            {% else %}
+                            <a href="{% url 'view:detail' post.id %}"><img class="blog-post-preview-img" src="
+                                    {{ post.post_image.full }}" alt="Thumbnail for post"></a>
+                            {% endif %}
+
+                            <br>
+                            {# Like button form #}
+                        <div style="display: flex; width: 100%">
+                            <form action="{% url 'view:like_post' %}" method="post" class="likepost-submit-form"
+                                  enctype="multipart/form-data" style="display: flex; flex: 1">
+                                {% csrf_token %}
+                                <input type="hidden" class="likepost-post-id-holder"
+                                       id="likepost-post-id-{{ post.id }}" name="likepost-post-id"
+                                       value="{{ post.id }}">
+                            <div class="likepost-submit-button-and-label" style="display: flex; margin-right: 10px; margin-left: -5px;">
+                                <button style="flex: 4; background-color: rgba(0,0,0,0); border: none;"
+                                        class="likepost-submit-button" type="submit"
+                                        id="likepost-submit-button-{{ post_id }}">
+                                    <i class="fa-solid fa-heart fa-2xl"
+                                       style="color: {% if post.like %}palevioletred{% else %}gray{% endif %};"></i>
+                                </button>
+                                <p style="flex: 1">{% if post.likes %}{{ post.likes }}{% else %}0{% endif %}</p>
+                            </div>
+                            </form>
+                            {# Comment input form #}
+                            <form action="{% url 'view:comment_new' %}" method="post" class="comment-submit-form"
+                                  enctype="multipart/form-data" style="flex: 7;">
+                                {% csrf_token %}
+                                {# text input #}
+                                <div style="width: 100%; display: flex; flex: 10; margin-bottom: 5px;">
+                                    <label for="text"></label>
+                                    <!--<<input type="text" id="text" name="text">-->
+                                    <textarea style="flex: 4; resize: none; width: 75%; margin-right: 10px;" rows=3
+                                              class="comment-textarea" id="comment-text-{{ post.id }}"
+                                              name="comment-text-{{ post.id }}"
+                                              placeholder="Write a comment"></textarea>
+                                    <input type="hidden" class="comment-post-id-holder"
+                                           id="comment-post-id-{{ post.id }}" name="comment-post-id"
+                                           value="{{ post.id }}">
+                                    <input style="flex: 1; width:25%" class="comment-submit-button" type="submit"
+                                           value="Submit" id="comment-submit-button-{{ post.id }}" disabled="disabled">
+                                </div>
+                                <script>
+                                    let textInput{{ post.id }} = document.getElementById("comment-text-{{ post.id }}");
+                                    let submitButton{{ post.id }} = document.getElementById("comment-submit-button-{{ post.id }}");
+                                    submitButton{{ post.id }}.disabled = true;
+                                    textInput{{ post.id }}.oninput = () => {
+                                        submitButton{{ post.id }}.disabled = !(textInput{{ post.id }}.value !== "");
+                                    };
+                                </script>
+                            </form>
+                        </div>
+
+                            {# Show comments #}
+                            <div class="comment-section-{{ post.id }}" style="width: 100%; margin-bottom: 5px;">
+                                {% for comment in comments %}
+                                    {% if comment.post_id == post.id %}
+                                        <div class="comment-box">
+                                        <p class="comment-name">{{ comment.user.first_name }}</p>
+                                        <p class="comment-text">{{ comment.comment_text }}</p>
+                                        </div>
+                                    {% else %}
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <p>No posts available</p>
+                {% endif %}
+
+                <script src="https://code.jquery.com/jquery-3.5.1.js"
+                        integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc="
+                        crossorigin="anonymous"></script>
+
+                <script type="text/javascript">
+                    $(document).on('submit', '.comment-submit-form', function (e) {
+                        var $form = $(this);
+                        var comment_text = $form.find('.comment-textarea').val();
+                        var post_id = $form.find('.comment-post-id-holder').val();
+                        e.preventDefault();
+                        $.ajax({
+                            type: 'POST',
+                            url: '{% url "view:comment_new" %}',
+                            data:
+                                {
+                                    comment_text: comment_text,
+                                    post_id: post_id,
+                                    csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
+                                },
+                            success: function (data) {
+                                $form.find('.comment-textarea').val('');
+                                $form.find('.comment-submit-button').prop('disabled', true);
+                                $('div.comment-section-'.concat(post_id)).replaceWith(data);
+                            }
+                        })
+                    });
+                    $(document).on('submit', '.likepost-submit-form', function (e) {
+                        var $form = $(this);
+                        var post_id = $form.find('.likepost-post-id-holder').val();
+                        e.preventDefault();
+                        $.ajax({
+                            type: 'POST',
+                            url: '{% url "view:like_post" %}',
+                            data:
+                                {
+                                    post_id: post_id,
+                                    csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
+                                },
+                            success: function (data) {
+                                console.log("Success!")
+                                $form.find('.likepost-submit-button-and-label').replaceWith(data);
+                            }
+                        })
+                    });
+                </script>
+
+            </div>
+        </div>
+    </div>
+{% endblock %}

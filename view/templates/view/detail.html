@@ -1,0 +1,18 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+    {% if post %}
+    <p>{{ post.post_text }}</p>
+        <img src="{% get_media_prefix %}{{ post.post_image }}" style="max-width: 100px;">
+    {% else %}
+    <p>Post not available</p>
+    {% endif %}
+
+</body>
+</html>

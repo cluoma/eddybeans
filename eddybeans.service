@@ -1,0 +1,13 @@
+[Unit]
+Description=Eddybeans GUNICORN Daemon
+After=network.target
+
+[Service]
+Type=simple
+User=colin
+WorkingDirectory=/home/colin/Documents/eddybeans/
+ExecStart=/home/colin/Documents/eddybeans/venv/bin/gunicorn eddybeans.asgi:application -k uvicorn.workers.UvicornWorker
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

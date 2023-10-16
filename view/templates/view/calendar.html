@@ -1,0 +1,130 @@
+{% extends "view/base.html" %}
+
+{% block extrastyle %}
+    <style>
+        input[type="file"] {
+            display: none;
+        }
+
+        input[type=button], input[type=submit], input[type=reset] {
+            background-color: #04AA6D;
+            border: none;
+            color: white;
+            padding: 16px 32px;
+            text-decoration: none;
+            margin: 4px 2px;
+            cursor: pointer;
+            border-radius: 5px;
+            -webkit-appearance: none;
+        }
+
+        input[type=submit][disabled] {
+            background-color: #777777;
+        }
+
+        .comment-box {
+            border-style: none none none solid;
+            padding-left: 10px;
+            border-left-color: #3b5998;
+        }
+
+        .comment-box > .comment-name {
+            font-size: 12px;
+            color: rgb(100, 100, 100);
+            margin-bottom: 0;
+        }
+
+        .comment-box > .comment-text {
+            font-size: 16px;
+            color: rgb(50, 50, 50);
+            margin-top: 3px;
+        }
+    </style>
+    {% load static %}
+    <link href="{% static 'view/calendar.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% load static %}
+{% block content %}
+    <div class="container" style="padding-bottom: 60px;">
+        <div class="row">
+            <div class="col-sm-3"></div>
+            <div class="col-sm-6">
+
+
+
+<div class="calendar">
+  <header>
+    <h1 style="margin-bottom: 0px;">November 2017</h1>
+  </header>
+
+  <ul class="weekdays">
+    <li>
+      <abbr title="S">S</abbr>
+    </li>
+    <li>
+      <abbr title="M">M</abbr>
+    </li>
+    <li>
+      <abbr title="T">T</abbr>
+    </li>
+    <li>
+      <abbr title="W">W</abbr>
+    </li>
+    <li>
+      <abbr title="T">T</abbr>
+    </li>
+    <li>
+      <abbr title="F">F</abbr>
+    </li>
+    <li>
+      <abbr title="S">S</abbr>
+    </li>
+  </ul>
+
+  <ol class="day-grid">
+    <li class="month=prev">29</li>
+    <li class="month=prev">30</li>
+    <li class="month=prev">31</li>
+    <li>1</li>
+    <li>2</li>
+    <li>3</li>
+    <li>4</li>
+    <li>5</li>
+    <li>6</li>
+    <li>7</li>
+    <li>8</li>
+    <li>9</li>
+    <li>10</li>
+    <li>11</li>
+    <li>12</li>
+    <li>13</li>
+    <li>14</li>
+    <li>15</li>
+    <li>16</li>
+    <li>17</li>
+    <li>18</li>
+    <li>19</li>
+    <li>20</li>
+    <li>21</li>
+    <li>22</li>
+    <li>23</li>
+    <li>24</li>
+    <li>25</li>
+    <li>26</li>
+    <li>27</li>
+    <li>28</li>
+    <li>29</li>
+    <li>30</li>
+    <li class="month-next">1</li>
+    <li class="month-next">2</li>
+  </ol>
+
+</div>
+
+
+
+            </div>
+        </div>
+    </div>
+{% endblock %}

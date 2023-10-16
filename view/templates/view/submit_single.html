@@ -1,0 +1,128 @@
+{% extends "view/base.html" %}
+
+{% block extrastyle %}
+    <style>
+        .image-container {
+            width: 90%;
+            margin: 0 auto 5px auto;
+        }
+
+        .image-container img {
+            display: block;
+            position: relative;
+            max-width: 100%;
+            max-height: 400px;
+            margin: auto;
+        }
+
+        figcaption {
+            margin: 20px 0 30px 0;
+            text-align: center;
+            color: #2a292a;
+        }
+
+        input[type="file"] {
+            display: none;
+        }
+
+        .upload-image-button {
+            display: block;
+            position: relative;
+            background-color: #428bca;
+            color: #ffffff;
+            font-size: 18px;
+            text-align: center;
+            width: 80%;
+            padding: 10px 0;
+            border-radius: 5px;
+            margin: auto;
+            cursor: pointer;
+        }
+
+        input[type=button], input[type=submit], input[type=reset] {
+            background-color: #04AA6D;
+            border: none;
+            color: white;
+            padding: 16px 32px;
+            text-decoration: none;
+            margin: 4px 2px;
+            cursor: pointer;
+            border-radius: 5px;
+            -webkit-appearance: none;
+        }
+
+        input[type=submit][disabled] {
+            background-color: #777777;
+        }
+    </style>
+{% endblock %}
+
+{% block extrascript %}
+    <script>
+
+    </script>
+{% endblock %}
+
+{% load static %}
+{% block content %}
+
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-3"></div>
+            <div class="col-sm-6">
+                <div class="blog-post-preview-card">
+                    <p class="blog-post-preview-text">Upload a picture and some text!</p>
+                    <form action="{% url 'view:submit_new' %}" method="post" enctype="multipart/form-data" onsubmit="submitButton.disabled = true;">
+                        {% csrf_token %}
+
+                        {# text input #}
+                        <div style="width: 100%; display: flex; margin-bottom: 5px;">
+                            <label for="text"></label>
+                            <!--<<input type="text" id="text" name="text">-->
+                            <textarea style="flex: 3; resize: none; width: 75%; margin-right: 10px;" rows=3 id="text"
+                                      name="text"></textarea>
+                            <input style="flex: 1; width:25%" type="submit" value="Submit" id="submit-button" name="submitButton"
+                                   disabled="disabled">
+                        </div>
+
+                        {# upload button #}
+                        <!--<input type="file" accept="image/*" id="photo" name="photo"><br>-->
+                        <figure class="image-container">
+                            <img id="chosen-image">
+                        </figure>
+                        <figure class="image-container">
+                            <img id="chosen-image-2">
+                        </figure>
+
+                        <input type="file" id="photo" name="photo" accept="image/*,video/*">
+                        <label class="upload-image-button" for="photo">
+                            <i class="fas fa-upload"></i> &nbsp; Choose A Photo or Video
+                        </label>
+                        <script>
+                            let textInput = document.getElementById("text");
+                            let uploadButton = document.getElementById("photo");
+                            let chosenImage = document.getElementById("chosen-image");
+                            let hasImage = false;
+                            let submitButton = document.getElementById("submit-button");
+                            submitButton.disabled = true;
+
+                            uploadButton.onchange = () => {
+                                let reader = new FileReader();
+                                reader.readAsDataURL(uploadButton.files[0]);
+                                reader.onload = () => {
+                                    chosenImage.setAttribute("src", reader.result);
+                                    hasImage = true;
+                                    submitButton.disabled = false;
+                                }
+                            };
+                            textInput.oninput = () => {
+                                submitButton.disabled = !(textInput.value !== "" || hasImage);
+                            };
+                        </script>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

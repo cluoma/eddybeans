@@ -1,0 +1,10 @@
+<div class="likepost-submit-button-and-label"
+     style="display: flex; margin-right: 10px; margin-left: -5px;">
+    <button style="flex: 4; background-color: rgba(0,0,0,0); border: none;"
+            class="likepost-submit-button" type="submit"
+            id="likepost-submit-button-{{ post_id }}">
+        <i class="fa-solid fa-heart fa-2xl"
+           style="color: {% if like.like %}palevioletred{% else %}gray{% endif %};"></i>
+    </button>
+    <p style="flex: 1">{% if likes.likes %}{{ likes.likes }}{% else %}0{% endif %}</p>
+</div>

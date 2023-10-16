@@ -1,0 +1,8 @@
+<div class="comment-section-{{ posts.0.id }}" style="width: 100%; margin-bottom: 5px;">
+    {% for comment in comments %}
+        <div class="comment-box">
+        <p class="comment-name">{{ comment.user.first_name }}</p>
+        <p class="comment-text">{{ comment.comment_text }}</p>
+        </div>
+    {% endfor %}
+</div>

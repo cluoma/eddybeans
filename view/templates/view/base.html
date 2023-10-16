@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>{{ title }}</title>
+    {% load static %}
+    <link href="{% static 'view/view.css' %}" rel="stylesheet">
+    <script src="{% static 'fontawesomefree/js/all.min.js' %}"></script>
+    <style>body {
+        padding-top: 65px;
+    }</style>
+    {% block extrastyle %}{% endblock %}
+    {% block extrascript %}{% endblock %}
+</head>
+
+<body>
+
+{% block navbar %}
+    <div class="navbar">
+        <div class="container">
+            <div class="navbar-header" style="width: 100%;">
+                <div style="float: left; color: white; padding: 10px;">
+                    EddyBeans
+                </div>
+                <div style="float: right;">
+                    <a href="{% url 'view:logout' %}" style="float: right;"><i class="fa-solid fa-right-from-bracket fa-lg"
+                                                                    style="float: right; color: #ffffff;"></i></a>
+                </div>
+                {% if user.first_name %}
+                    <div style="float: right; color: white; padding: 10px;">
+                    {{ user.first_name }}
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block content %}{% endblock %}
+
+</body>
+
+{% block footer %}{% endblock %}
+
+{% block bottombar %}
+    <div class="bottom-nav">
+        <div style="padding: 10px; margin-left: 25%; margin-right: 25%;">
+            {% if 'timeline' in title|lower %}
+                            <i class="fa-solid fa-bars-staggered fa-2xl active" style="color: white; padding: 10px; margin: -10px; float: left"></i>
+            {% else %}
+                            <a href="{% url 'view:index' %}"><i class="fa-solid fa-bars-staggered fa-2xl" style="color: white; float: left"></i></a>
+            {% endif %}
+            {% if 'calendar' in title|lower %}
+                <i class="fa-solid fa-calendar-day fa-2xl active" style="color: white; padding: 10px; margin: -10px;"></i>
+            {% else %}
+                <a href="{% url 'view:calendar' %}"><i class="fa-solid fa-calendar-day fa-2xl" style="color: white; "></i></a>
+            {% endif %}
+            {% if 'upload' in title|lower %}
+                            <i class="fa-solid fa-plus fa-2xl active" style="color: white; padding: 10px; margin: -10px; float: right;"></i>
+            {% else %}
+                            <a href="{% url 'view:submit' %}"><i class="fa-solid fa-plus fa-2xl" style="color: white; float: right;"></i></a>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}
+
+</html>
