@@ -12,6 +12,7 @@ urlpatterns = [
     path("comment/new", views.submit_new_comment, name='comment_new'),
     path("post/like", views.like_post, name='like_post'),
     path("post/edit/<int:post_id>", views.edit_post, name="edit_post"),
+    path("post/edit/text", views.post_update_text, name="post_update_text"),
     path("post/delete/<int:post_id>", views.delete_post, name="delete_post"),
     path("calendar/", views.calendar, name="calendar"),
     path("logout", views.logout_view, name="logout")

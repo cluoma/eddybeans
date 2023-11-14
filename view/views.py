@@ -123,6 +123,8 @@ def submit_new_post(request):
             p.save()
             return HttpResponseRedirect(reverse('view:index'))
 
+        # print(request.POST)
+        # print(request.FILES)
         for i, f in enumerate(request.FILES.getlist('photo')):
             print(request.POST.getlist('imgtext')[i])
             try:
@@ -221,15 +223,43 @@ def like_post(request):
 
 
 @login_required
+@permission_required("view.change_post")
 def edit_post(request, post_id):
     post = get_object_or_404(Post, pk=post_id)
+    videos = Video.objects.filter(post_id=post.id)
+    print(videos)
 
     if request.user.id != post.user_id:
         return HttpResponseRedirect(reverse('view:index'))
 
-    template = loader.get_template('view/detail.html')
-    context = {'post': post}
+    user_permissions = request.user.get_all_permissions()
+
+    template = loader.get_template('view/edit_post.html')
+    context = {
+        'title': 'Eddybeans - Editting',
+        'user': request.user,
+        'user_permissions': user_permissions,
+        'post': post,
+        'videos': videos
+    }
     return HttpResponse(template.render(context, request))
+
+
+@login_required
+@permission_required("view.change_post")
+def post_update_text(request):
+    if request.method == 'POST':
+        try:
+            current_user = request.user
+            post = get_object_or_404(Post, pk=request.POST['post-id'])
+            post.post_text = request.POST['post-text']
+            post.save()
+        except:
+            return HttpResponseBadRequest("Error")
+    else:
+            return HttpResponseNotAllowed(['POST'])
+
+    return HttpResponseRedirect(reverse('view:index'))
 
 
 @login_required

@@ -72,7 +72,7 @@
             <div class="col-sm-6">
                 <div class="blog-post-preview-card">
                     <p class="blog-post-preview-text">Upload pictures, videos, and some text!</p>
-                    <form action="{% url 'view:submit_new' %}" method="post" enctype="multipart/form-data"
+                    <form id="submit-form" action="{% url 'view:submit_new' %}" method="post" enctype="multipart/form-data"
                           onsubmit="submitButton.disabled = true;">
                         {% csrf_token %}
 
@@ -95,6 +95,7 @@
                             <i class="fas fa-upload"></i> &nbsp; Choose Photos or Videos
                         </label>
                         <script>
+                            let curCount = 0;
                             let textInput = document.getElementById("text");
                             let hasImage = false;
                             let submitButton = document.getElementById("submit-button");
@@ -133,7 +134,16 @@
 
                                 if (!ev.target.files) return; // Do nothing.
                                 else {
+                                    curCount = 0;
                                     [...ev.target.files].forEach(preview);
+                                    {#const metadata = {};#}
+                                    {#for (let file of ev.target.files) {#}
+                                    {#    metadata[file.name] = curCount;#}
+                                    {#    curCount += 1;#}
+                                    {#}#}
+                                    {#document.getElementById("submit-form").append('metadata', JSON.stringify(metadata));#}
+                                    {#console.log(JSON.stringify(metadata));#}
+
                                     textInput.remove();
                                     hasImage = true;
                                     submitButton.disabled = false;
