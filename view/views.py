@@ -246,11 +246,14 @@ def edit_post(request, post_id):
 
 
 @login_required
-@permission_required("view.change_post")
 def post_update_text(request):
     if request.method == 'POST':
+
+        # only the user that submitted the post can edit
+        if request.user.id != request.POST['post-id']:
+            return HttpResponseBadRequest("Error")
+
         try:
-            current_user = request.user
             post = get_object_or_404(Post, pk=request.POST['post-id'])
             post.post_text = request.POST['post-text']
             post.save()
