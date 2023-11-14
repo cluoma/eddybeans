@@ -2,4 +2,4 @@ db.sqlite3
 eddybeans/settings.py
 media/*
 venv/*
-__pycache__/*
+*/__pycache__/*
