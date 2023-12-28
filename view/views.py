@@ -1,4 +1,6 @@
-from django.db.models import Subquery, F, OuterRef, Sum, IntegerField
+from datetime import date
+
+from django.db.models import Subquery, F, OuterRef, Sum, IntegerField, Max
 from django.http import HttpResponse, Http404, HttpResponseNotAllowed, HttpResponseBadRequest, HttpResponseRedirect
 from django.template import loader, RequestContext
 from django.shortcuts import get_object_or_404, render
@@ -19,15 +21,15 @@ import re
 #     return p
 
 def get_paginated_posts_by_day(request):
-    dates = Post.objects.dates("post_date", "day", order="DESC")
+    dates = Post.objects.dates("post_day", "day", order="DESC")
     p = Paginator(dates, 3)
     page_number = request.GET.get("page", 1)
     page_obj = p.get_page(page_number)
     page_range = p.get_elided_page_range(page_number, on_each_side=2, on_ends=1)
     # print(page_obj.object_list.values('datefield'))
 
-    posts = Post.objects.filter(post_date__date__in=page_obj.object_list.values('datefield'))\
-            .order_by('-post_date')\
+    posts = Post.objects.filter(post_day__in=page_obj.object_list.values('datefield'))\
+            .order_by('-post_day', 'post_day_order', '-post_date')\
             .select_related('user')\
             .annotate(
         like=Subquery(
@@ -103,10 +105,20 @@ def submit_post(request):
     return HttpResponse(template.render(context, request))
 
 
+def next_post_day_order(day) -> int:
+    p = Post.objects.filter(post_day=day).aggregate(max_order=Max("post_day_order", output_field=IntegerField()))
+    print(p['max_order'])
+    if (p['max_order'] is None or p['max_order']):
+        return 0
+    else:
+        return p['max_order'] + 1
+
+
 @login_required
 @permission_required("view.add_post")
 def submit_new_post(request):
     if request.method == 'POST':
+        next_day_ord = next_post_day_order(timezone.now().date())
         # print(len(request.FILES.getlist('photo')))
         # print(request.FILES.getlist('photo')[0].content_type)
         # print(request.FILES['photo'].content_type)
@@ -120,7 +132,8 @@ def submit_new_post(request):
             p = Post(
                 user=request.user,
                 post_text=request.POST['text'],
-                post_date=timezone.now()
+                post_date=timezone.now(),
+                post_day_order=next_day_ord
             )
             p.save()
             return HttpResponseRedirect(reverse('view:index'))
@@ -134,7 +147,8 @@ def submit_new_post(request):
                     p = Post(
                         user=request.user,
                         post_text=request.POST.getlist('imgtext')[i],
-                        post_date=timezone.now()
+                        post_date=timezone.now(),
+                        post_day_order=next_day_ord
                     )
                     p.save()
                     v = Video(
@@ -147,7 +161,8 @@ def submit_new_post(request):
                         user=request.user,
                         post_text=request.POST.getlist('imgtext')[i],
                         post_date=timezone.now(),
-                        post_image=f
+                        post_image=f,
+                        post_day_order=next_day_ord
                     )
                     p.save()
             except Exception as e:

@@ -1,3 +1,5 @@
+from datetime import date
+
 from django.db import models
 from django.conf import settings
 from django.db.models import UniqueConstraint
@@ -18,6 +20,9 @@ class Post(models.Model):
     )
     post_text = models.CharField(max_length=200)
     post_date = models.DateTimeField('date')
+    post_day = models.DateField('day', default=date.today)
+    post_day_order = models.PositiveSmallIntegerField(default=0)
+
 
     class Meta:
         permissions = [

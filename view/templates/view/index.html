@@ -53,9 +53,9 @@
                 {# Post Cards with picture, likes, and comments #}
                 {% if posts %}
                     {% for post in posts %}
-                        {% ifchanged post.post_date|date:"F j, Y" %}
+                        {% ifchanged post.post_day %}
                             <div class="blog-post-preview-card"><h1
-                                    style="background: rgb(245, 245, 245); margin-bottom: -5px;">{{ post.post_date|date:"F j, Y" }}</h1>
+                                    style="background: rgb(245, 245, 245); margin-bottom: -5px;">{{ post.post_day|date:"F j, Y" }}</h1>
                             </div>
                         {% endifchanged %}
                         <div class="blog-post-preview-card">
