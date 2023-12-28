@@ -23,6 +23,7 @@ def get_paginated_posts_by_day(request):
     p = Paginator(dates, 3)
     page_number = request.GET.get("page", 1)
     page_obj = p.get_page(page_number)
+    page_range = p.get_elided_page_range(page_number, on_each_side=2, on_ends=1)
     # print(page_obj.object_list.values('datefield'))
 
     posts = Post.objects.filter(post_date__date__in=page_obj.object_list.values('datefield'))\
@@ -51,6 +52,7 @@ def get_paginated_posts_by_day(request):
         'user': request.user,
         'user_permissions': user_permissions,
         'page_obj': page_obj,
+        'page_range': page_range,
         'posts': posts,
         'comments': comments,
         'likers': likers,

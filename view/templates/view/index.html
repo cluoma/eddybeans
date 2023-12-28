@@ -235,47 +235,33 @@
                     });
                 </script>
 
-{#                <div class="pagination">#}
-{#    <span class="step-links">#}
-{#        {% if page_obj.has_previous %}#}
-{#            <a href="?page=1">&laquo; first</a>#}
-{#            <a href="?page={{ page_obj.previous_page_number }}">previous</a>#}
-{#        {% endif %}#}
-{##}
-{#        <span class="current">#}
-{#            Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.#}
-{#        </span>#}
-{##}
-{#        {% if page_obj.has_next %}#}
-{#            <a href="?page={{ page_obj.next_page_number }}">next</a>#}
-{#            <a href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a>#}
-{#        {% endif %}#}
-{#    </span>#}
-{#                </div>#}
+                {% if page_obj.has_other_pages %}
+                    <div class="center"><div class="pagination">
+                        {% if page_obj.has_previous %}
+                            <a href="?page={{ page_obj.previous_page_number }}">&laquo;</a>
+                        {% else %}
+                            <span class="disabled">&laquo;</span>
+                        {% endif %}
 
-                                {% if page_obj.has_other_pages %}
-                                    <div class="center">
-  <div class="pagination">
-    {% if page_obj.has_previous %}
-      <a href="?page={{ page_obj.previous_page_number }}">&laquo;</a>
-    {% else %}
-      <span class="disabled">&laquo;</span>
-    {% endif %}
-    {% for i in page_obj.paginator.page_range %}
-      {% if page_obj.number == i %}
-        <span class="active">{{ i }} <span class="sr-only">(current)</span></span>
-      {% else %}
-        <a href="?page={{ i }}">{{ i }}</a>
-      {% endif %}
-    {% endfor %}
-    {% if page_obj.has_next %}
-      <a href="?page={{ page_obj.next_page_number }}">&raquo;</a>
-    {% else %}
-      <span class="disabled">&raquo;</span>
-    {% endif %}
-  </div>
-                                    </div>
-{% endif %}
+                        {% for i in page_range|default_if_none:page_obj.paginator.get_elided_page_range %}
+                            {% if page_obj.number == i %}
+                                <span class="active">{{ i }} <span class="sr-only">(current)</span></span>
+                            {% else %}
+                                {% if i == page_obj.paginator.ELLIPSIS %}
+                                    <span>{{ i }}<span class="sr-only"></span></span>
+                                {% else %}
+                                    <a href="?page={{ i }}">{{ i }}</a>
+                                {% endif %}
+                            {% endif %}
+                        {% endfor %}
+
+                        {% if page_obj.has_next %}
+                            <a href="?page={{ page_obj.next_page_number }}">&raquo;</a>
+                        {% else %}
+                            <span class="disabled">&raquo;</span>
+                        {% endif %}
+                    </div></div>
+                {% endif %}
 
             </div>
         </div>
