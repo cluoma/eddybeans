@@ -106,6 +106,7 @@ def submit_post(request):
 
 
 def next_post_day_order(day) -> int:
+    print(day)
     p = Post.objects.filter(post_day=day).aggregate(max_order=Max("post_day_order", output_field=IntegerField()))
     print(p['max_order'])
     if (p['max_order'] is None or p['max_order']):
@@ -118,7 +119,6 @@ def next_post_day_order(day) -> int:
 @permission_required("view.add_post")
 def submit_new_post(request):
     if request.method == 'POST':
-        next_day_ord = next_post_day_order(timezone.now().date())
         # print(len(request.FILES.getlist('photo')))
         # print(request.FILES.getlist('photo')[0].content_type)
         # print(request.FILES['photo'].content_type)
@@ -133,7 +133,7 @@ def submit_new_post(request):
                 user=request.user,
                 post_text=request.POST['text'],
                 post_date=timezone.now(),
-                post_day_order=next_day_ord
+                post_day_order=next_post_day_order(timezone.localtime().date())
             )
             p.save()
             return HttpResponseRedirect(reverse('view:index'))
@@ -148,7 +148,7 @@ def submit_new_post(request):
                         user=request.user,
                         post_text=request.POST.getlist('imgtext')[i],
                         post_date=timezone.now(),
-                        post_day_order=next_day_ord
+                        post_day_order=next_post_day_order(timezone.localtime().date())
                     )
                     p.save()
                     v = Video(
@@ -162,7 +162,7 @@ def submit_new_post(request):
                         post_text=request.POST.getlist('imgtext')[i],
                         post_date=timezone.now(),
                         post_image=f,
-                        post_day_order=next_day_ord
+                        post_day_order=next_post_day_order(timezone.localtime().date())
                     )
                     p.save()
             except Exception as e:
