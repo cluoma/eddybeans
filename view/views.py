@@ -109,7 +109,7 @@ def next_post_day_order(day) -> int:
     print(day)
     p = Post.objects.filter(post_day=day).aggregate(max_order=Max("post_day_order", output_field=IntegerField()))
     print(p['max_order'])
-    if (p['max_order'] is None or p['max_order']):
+    if (p['max_order'] is None):
         return 0
     else:
         return p['max_order'] + 1
